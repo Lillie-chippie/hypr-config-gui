@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hyprland Configuration</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>⚙️ Hyprland Configuration</h1>
+            <p class="subtitle">Manage your keybinds, timeouts, and wallpapers</p>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab-btn active" data-tab="keybinds">🎹 Keybinds</button>
+            <button class="tab-btn" data-tab="hypridle">⏱️ Hypridle</button>
+            <button class="tab-btn" data-tab="wallpapers">🖼️ Wallpapers</button>
+        </nav>
+
+        <!-- KEYBINDS TAB -->
+        <div class="tab-content active" id="keybinds">
+            <div class="section-header">
+                <h2>Keyboard Shortcuts</h2>
+                <input type="text" id="keybind-search" placeholder="🔍 Search keybinds..." class="search-input">
+            </div>
+
+            <div class="keybinds-actions-bar">
+                <button class="btn btn-secondary" id="add-keybind">➕ Add Keybind</button>
+            </div>
+
+            <div class="keybinds-grid" id="keybinds-grid">
+                <!-- Populated by JavaScript -->
+            </div>
+
+            <!-- Command Suggestions -->
+            <datalist id="dispatcher-list">
+                <option value="exec">
+                <option value="killactive">
+                <option value="workspace">
+                <option value="movetoworkspace">
+                <option value="togglefloating">
+                <option value="fullscreen">
+                <option value="pseudo">
+                <option value="togglesplit">
+                <option value="exit">
+                <option value="forcerenderer">
+                <option value="movefocus">
+                <option value="movewindow">
+                <option value="resizeactive">
+            </datalist>
+        </div>
+
+        <!-- HYPRIDLE TAB -->
+        <div class="tab-content" id="hypridle">
+            <div class="section-header">
+                <h2>Idle Timeouts</h2>
+                <div class="preset-buttons">
+                    <button class="btn btn-secondary" data-preset="power-saver">🔋 Power Saver</button>
+                    <button class="btn btn-secondary" data-preset="balanced">⚖️ Balanced</button>
+                    <button class="btn btn-secondary" data-preset="performance">⚡ Performance</button>
+                </div>
+            </div>
+
+            <div class="timeout-controls">
+                <div class="timeout-item">
+                    <label>
+                        <span class="timeout-icon">💡</span>
+                        <span class="timeout-label">Screen Dim</span>
+                        <span class="timeout-value" id="screen-dim-value">150s (2.5 min)</span>
+                    </label>
+                    <input type="range" id="screen-dim" min="30" max="600" step="30" value="150" class="slider">
+                </div>
+
+                <div class="timeout-item">
+                    <label>
+                        <span class="timeout-icon">⌨️</span>
+                        <span class="timeout-label">Keyboard Backlight</span>
+                        <span class="timeout-value" id="keyboard-backlight-value">150s (2.5 min)</span>
+                    </label>
+                    <input type="range" id="keyboard-backlight" min="30" max="600" step="30" value="150" class="slider">
+                </div>
+
+                <div class="timeout-item">
+                    <label>
+                        <span class="timeout-icon">🔒</span>
+                        <span class="timeout-label">Lock Screen</span>
+                        <span class="timeout-value" id="lock-value">300s (5 min)</span>
+                    </label>
+                    <input type="range" id="lock" min="60" max="1800" step="60" value="300" class="slider">
+                </div>
+
+                <div class="timeout-item">
+                    <label>
+                        <span class="timeout-icon">🖥️</span>
+                        <span class="timeout-label">Screen Off</span>
+                        <span class="timeout-value" id="screen-off-value">330s (5.5 min)</span>
+                    </label>
+                    <input type="range" id="screen-off" min="60" max="1800" step="30" value="330" class="slider">
+                </div>
+
+                <div class="timeout-item">
+                    <label>
+                        <span class="timeout-icon">💤</span>
+                        <span class="timeout-label">Suspend</span>
+                        <span class="timeout-value" id="suspend-value">1800s (30 min)</span>
+                    </label>
+                    <input type="range" id="suspend" min="300" max="7200" step="300" value="1800" class="slider">
+                </div>
+            </div>
+
+            <button class="btn btn-primary" id="save-hypridle">💾 Save Timeouts</button>
+        </div>
+
+        <!-- WALLPAPERS TAB -->
+        <div class="tab-content" id="wallpapers">
+            <div class="section-header">
+                <h2>Wallpaper Manager</h2>
+                <div class="wallpaper-actions">
+                    <label for="wallpaper-upload" class="btn btn-secondary">
+                        📤 Upload Wallpaper
+                        <input type="file" id="wallpaper-upload" accept="image/*" style="display: none;">
+                    </label>
+                </div>
+            </div>
+
+            <div class="wallpapers-grid" id="wallpapers-grid">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+
+        <footer>
+            <p>Hyprland Configuration GUI • Made with ❤️ for Hyprland users</p>
+        </footer>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
