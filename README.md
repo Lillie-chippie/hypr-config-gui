@@ -4,6 +4,8 @@ A modern, web-based GUI tool to easily manage your Hyprland configuration.
 
 ![Hyprland Config GUI](https://img.shields.io/badge/Hyprland-Config-7aa2f7?style=for-the-badge)
 
+my dotfiles : https://github.com/Lillie-chippie/dotfiles
+
 ## ✨ Features
 
 ### 🎹 Keybinds Manager
