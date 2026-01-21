@@ -129,6 +129,41 @@ const HYPRLAND_DISPATCHERS = [
     { value: 'global', label: 'global - Global shortcut', needsParam: true },
 ];
 
+const MODIFIERS_LIST = [
+    { value: '', label: 'None' },
+    { value: 'SUPER', label: 'SUPER (Windows)' },
+    { value: 'CTRL', label: 'CTRL' },
+    { value: 'ALT', label: 'ALT' },
+    { value: 'SHIFT', label: 'SHIFT' },
+    { value: 'SUPER SHIFT', label: 'SUPER + SHIFT' },
+    { value: 'SUPER CTRL', label: 'SUPER + CTRL' },
+    { value: 'SUPER ALT', label: 'SUPER + ALT' },
+    { value: 'CTRL ALT', label: 'CTRL + ALT' },
+    { value: 'CTRL SHIFT', label: 'CTRL + SHIFT' },
+    { value: 'ALT SHIFT', label: 'ALT + SHIFT' },
+    { value: 'SUPER CTRL SHIFT', label: 'SUPER + CTRL + SHIFT' },
+];
+
+const KEYS_LIST = [
+    // Special
+    'RETURN', 'SPACE', 'BACKSPACE', 'TAB', 'ESCAPE',
+    'UP', 'DOWN', 'LEFT', 'RIGHT',
+    'HOME', 'END', 'PAGE_UP', 'PAGE_DOWN',
+    'DELETE', 'INSERT', 'PRINT',
+
+    // Letters
+    ...Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i)), // A-Z
+
+    // Numbers
+    ...Array.from({ length: 10 }, (_, i) => String(i)), // 0-9
+
+    // Function Keys
+    ...Array.from({ length: 12 }, (_, i) => `F${i + 1}`),
+
+    // Mouse
+    'mouse:272', 'mouse:273'
+];
+
 async function loadKeybinds() {
     try {
         const response = await fetch('/api/keybinds');
@@ -168,11 +203,11 @@ function renderKeybinds(filter = '') {
             const key = kb.key || '';
 
             currentKeybind = `
-                <div class="keybind-current">
-                    ${modifiers.map(mod => `<span class="key-badge modifier">${mod}</span>`).join('')}
-                    ${key ? `<span class="key-badge">${key}</span>` : ''}
-                </div>
-            `;
+                 <div class="keybind-current">
+                     ${modifiers.map(mod => `<span class="key-badge modifier">${mod}</span>`).join('')}
+                     ${key ? `<span class="key-badge">${key}</span>` : ''}
+                 </div>
+             `;
         } else {
             currentKeybind = '<div class="keybind-empty">Not set</div>';
         }
@@ -186,31 +221,64 @@ function renderKeybinds(filter = '') {
             `<option value="${d.value}" ${kb.action === d.value ? 'selected' : ''}>${d.label}</option>`
         ).join('');
 
+        // Build Modifier dropdown options
+        const modifierOptions = MODIFIERS_LIST.map(m =>
+            `<option value="${m.value}" ${(kb.modifier || '') === m.value ? 'selected' : ''}>${m.label}</option>`
+        ).join('');
+
+        // Build Key dropdown options
+        const keyOptions = KEYS_LIST.map(k =>
+            `<option value="${k}" ${(kb.key || '').toUpperCase() === k ? 'selected' : ''}>${k}</option>`
+        ).join('');
+        // Add option if current key is custom/not in list
+        if (kb.key && !KEYS_LIST.includes(kb.key.toUpperCase())) {
+            // Handle raw chars that might not be in the list
+            keyOptions += `<option value="${kb.key}" selected>${kb.key}</option>`;
+        }
+
+
         card.innerHTML = `
-            <button class="keybind-delete-btn" onclick="deleteKeybind(${keybindsData.indexOf(kb)})">🗑️</button>
-            <div class="keybind-category">${kb.category || 'Custom'}</div>
-            <div class="keybind-action">${actionDisplay}${commandDisplay}</div>
-            ${currentKeybind}
-            <button class="keybind-set-btn" onclick="startRecording(${keybindsData.indexOf(kb)})">
-                🎮 Press to Set Keybind
-            </button>
-            <div class="keybind-details">
-                <div class="keybind-detail-row">
-                    <span class="keybind-detail-label">Action:</span>
-                    <select class="keybind-detail-select" 
-                           onchange="updateKeybindField(${keybindsData.indexOf(kb)}, 'action', this.value)">
-                        ${dispatcherOptions}
-                    </select>
-                </div>
-                <div class="keybind-detail-row">
-                    <span class="keybind-detail-label">Command:</span>
-                    <input type="text" class="keybind-detail-input" 
-                           value="${kb.command || ''}"
-                           placeholder="e.g., kitty, 1, l, etc."
-                           onchange="updateKeybindField(${keybindsData.indexOf(kb)}, 'command', this.value)">
-                </div>
-            </div>
-        `;
+             <button class="keybind-delete-btn" onclick="deleteKeybind(${keybindsData.indexOf(kb)})">🗑️</button>
+             <div class="keybind-category">${kb.category || 'Custom'}</div>
+             <div class="keybind-action">${actionDisplay}${commandDisplay}</div>
+             ${currentKeybind}
+             <button class="keybind-set-btn" onclick="startRecording(${keybindsData.indexOf(kb)})">
+                 🎮 Press to Set Keybind
+             </button>
+             <div class="keybind-details">
+                 <div class="keybind-detail-row">
+                     <span class="keybind-detail-label">Mod:</span>
+                     <select class="keybind-detail-select"
+                            onchange="updateKeybindField(${keybindsData.indexOf(kb)}, 'modifier', this.value)">
+                            <option value="">None</option>
+                         ${modifierOptions}
+                     </select>
+                 </div>
+                 <div class="keybind-detail-row">
+                     <span class="keybind-detail-label">Key:</span>
+                     <select class="keybind-detail-select"
+                            onchange="updateKeybindField(${keybindsData.indexOf(kb)}, 'key', this.value)">
+                            <option value="">Select Key...</option>
+                         ${keyOptions}
+                     </select>
+                 </div>
+                 <div class="keybind-detail-row">
+                     <span class="keybind-detail-label">Action:</span>
+                     <select class="keybind-detail-select"
+                            onchange="updateKeybindField(${keybindsData.indexOf(kb)}, 'action', this.value)">
+                            <option value="">Select Action...</option>
+                         ${dispatcherOptions}
+                     </select>
+                 </div>
+                 <div class="keybind-detail-row">
+                     <span class="keybind-detail-label">Cmd:</span>
+                     <input type="text" class="keybind-detail-input"
+                            value="${kb.command || ''}"
+                            placeholder="e.g., kitty, 1, l, etc."
+                            onchange="updateKeybindField(${keybindsData.indexOf(kb)}, 'command', this.value)">
+                 </div>
+             </div>
+         `;
 
         grid.appendChild(card);
     });
@@ -302,6 +370,7 @@ function updateKeybindField(index, field, value) {
     if (keybindsData[index]) {
         keybindsData[index][field] = value;
         scheduleAutoSave();
+        renderKeybinds(document.getElementById('keybind-search').value);
     }
 }
 
